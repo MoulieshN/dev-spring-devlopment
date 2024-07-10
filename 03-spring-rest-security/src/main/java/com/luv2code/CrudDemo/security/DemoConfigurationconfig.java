@@ -26,7 +26,16 @@ public class DemoConfigurationconfig {
     // Now, the rest security will allow the user to access the api based on the roles which are fetched from the database
     @Bean
     public UserDetailsManager userDetailsManager(DataSource dataSource){
-        return new JdbcUserDetailsManager(dataSource);
+//        return new JdbcUserDetailsManager(dataSource); --> this is for default users and authorities table
+
+        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
+
+        // define the queries to use to fetch the user by username and the authorities for the user
+        jdbcUserDetailsManager.setUsersByUsernameQuery("select user_id, pwd, active from members where user_id = ?");
+
+        jdbcUserDetailsManager.setAuthoritiesByUsernameQuery("select user_id, role from roles where user_id = ?");
+
+        return jdbcUserDetailsManager;
     }
 
     @Bean
